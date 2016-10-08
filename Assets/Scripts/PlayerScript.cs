@@ -3,8 +3,9 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour 
 {
-  
   PlatformCharacterController pcc;
+  
+  public Transform camera;
   
   float gravity = -25f;
 	float runSpeed = 8f;
@@ -26,16 +27,19 @@ public class PlayerScript : MonoBehaviour
   
   void Update () 
   {    
+  
+    camera.position = this.transform.position + new Vector3(0, 1.81f, -10);
+  
     if( pcc.isGrounded )
 			_velocity.y = 0;
 
-		if( Input.GetKey( KeyCode.RightArrow ) )
+		if( Input.GetKey( KeyCode.RightArrow ) || Input.GetKey( KeyCode.D ))
 		{
 			normalizedHorizontalSpeed = 1;
 			if( transform.localScale.x < 0f )
 				transform.localScale = new Vector3( -transform.localScale.x, transform.localScale.y, transform.localScale.z );
 		}
-		else if( Input.GetKey( KeyCode.LeftArrow ) )
+		else if( Input.GetKey( KeyCode.LeftArrow ) || Input.GetKey( KeyCode.A ))
 		{
 			normalizedHorizontalSpeed = -1;
 			if( transform.localScale.x > 0f )
@@ -46,13 +50,11 @@ public class PlayerScript : MonoBehaviour
 			normalizedHorizontalSpeed = 0;
 		}
 
-
 		// we can only jump whilst grounded
-		if( pcc.isGrounded && Input.GetKeyDown( KeyCode.UpArrow ) )
+		if( pcc.isGrounded && (Input.GetKeyDown( KeyCode.UpArrow ) || Input.GetKey( KeyCode.W )))
 		{
 			_velocity.y = Mathf.Sqrt( 2f * jumpHeight * -gravity );
 		}
-
 
 		// apply horizontal speed smoothing it. dont really do this with Lerp. Use SmoothDamp or something that provides more control
 		var smoothedMovementFactor = pcc.isGrounded ? groundDamping : inAirDamping; // how fast do we change direction?
