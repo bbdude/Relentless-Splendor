@@ -27,9 +27,11 @@ public class PlayerScript : MonoBehaviour
   
   void Update () 
   {    
-  
+    #region Camera
     camera.position = this.transform.position + new Vector3(0, 1.81f, -10);
-  
+    #endregion
+    
+    #region Movement stuff
     if( pcc.isGrounded )
 			_velocity.y = 0;
 
@@ -75,6 +77,22 @@ public class PlayerScript : MonoBehaviour
 
 		// grab our current _velocity to use as a base for all calculations
 		_velocity = pcc.velocity;
+    #endregion
+    
+    #region Mouse stuff
+    
+    if (Input.GetMouseButtonDown (0)) {
+      RaycastHit hit;
+      Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+      if(Physics.Raycast (ray, out hit, 100))
+      {
+       if(hit.transform.tag == "Ground")
+       {
+         Debug.Log ("Logged");
+       }
+      }
+     }
+    #endregion
   }
   
   void onControllerCollider( RaycastHit hit )
