@@ -14,12 +14,16 @@ public class PlayerScript : MonoBehaviour
 	float jumpHeight = 3f;
   float normalizedHorizontalSpeed = 0;
   
+  int block;
+  
   RaycastHit _lastCCHit;
   Vector3 _velocity;
+  BlockManager bmgr;
   
 	void Start () 
   {
     pcc = GetComponent<PlatformCharacterController>();
+    bmgr = camera.GetComponent<BlockManager>();
     pcc.onControllerCollidedEvent += onControllerCollider;
 		pcc.onTriggerEnterEvent += onTriggerEnterEvent;
 		pcc.onTriggerExitEvent += onTriggerExitEvent;
@@ -81,16 +85,28 @@ public class PlayerScript : MonoBehaviour
     
     #region Mouse stuff
     
-    if (Input.GetMouseButtonDown (0)) {
+    if (Input.GetMouseButton(0)) 
+    {
       RaycastHit hit;
       Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+      bool hitSomething = false;
       if(Physics.Raycast (ray, out hit, 100))
       {
-       if(hit.transform.tag == "Ground")
-       {
-         Debug.Log ("Logged");
-       }
+        if(hit.transform.tag == "Ground")
+        {
+          bmgr.OnHold(hit.transform.gameObject, this.transform.position);
+          //Debug.Log ("Logged");
+          hitSomething = true;
+        }
       }
+      if (!hitSomething)
+      {
+        bmgr.OnRelease();
+      }
+     }
+     else if (Input.GetMouseButtonUp(0))
+     {
+       bmgr.OnRelease();
      }
     #endregion
   }
